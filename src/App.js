@@ -1,24 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import "./App.css";
+import Home from "./components/Home";
+import NotFound from "./components/NotFound";
+
+import Layout from "./components/UI/Layout";
+import User from "./components/User";
+import Users from "./components/Users";
 
 function App() {
+  const navigate = useNavigate();
+
+  const [users, setUsers] = React.useState([
+    { id: "1", fullName: "Bob Vila" },
+    { id: "2", fullName: "John Connor" }
+  ]);
+
+  const handleRemoveUser = (userId) => {
+    setUsers((state) => state.filter((user) => user.id !== userId));
+
+    navigate('/users')
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="home" element={<Home />} />
+        <Route path="users" element={<Users users={users} />}>
+          <Route
+            path=":userId"
+            element={<User onRemoveUser={handleRemoveUser} />}
+          />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 
